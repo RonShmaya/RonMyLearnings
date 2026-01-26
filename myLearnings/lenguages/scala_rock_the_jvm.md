@@ -6,77 +6,78 @@ A fast reference guide for Scala beginners with practical examples to remember c
 
 ## Table of Contents
 1. [Basics](#basics)
-   - [Values and Types](#values-and-types)
-   - [Strings](#strings)
-   - [Expressions](#expressions)
-   - [Code Blocks](#code-blocks)
-   - [Functions](#functions)
-   - [Unit Type](#unit-type)
+    - [Values and Types](#values-and-types)
+    - [Strings](#strings)
+    - [Expressions](#expressions)
+    - [Code Blocks](#code-blocks)
+    - [Functions](#functions)
+    - [Unit Type](#unit-type)
 2. [Object Orientation](#object-orientation)
-   - [Classes and Instances](#classes-and-instances)
-   - [Constructor Parameters: val, var, or nothing?](#constructor-parameters-val-var-or-nothing)
-   - [Inheritance](#inheritance)
-   - [Abstract Classes](#abstract-classes)
-   - [Traits (Interfaces)](#traits-interfaces)
-   - [Infix Notation](#infix-notation)
-   - [Anonymous Classes](#anonymous-classes)
-   - [Singleton Objects](#singleton-objects)
-   - [The apply Method - Deep Dive](#the-apply-method---deep-dive)
-   - [Companion Objects](#companion-objects)
-   - [Case Classes](#case-classes)
-     - [Case Class Constructor Parameters - Special Behavior!](#case-class-constructor-parameters---special-behavior)
-     - [Explicit val in Case Classes](#explicit-val-in-case-classes)
-     - [Using var in Case Classes](#using-var-in-case-classes)
-   - [Exception Handling](#exception-handling)
-   - [Generics](#generics)
-   - [Key Principles](#key-principles)
+    - [Classes and Instances](#classes-and-instances)
+    - [Constructor Parameters: val, var, or nothing?](#constructor-parameters-val-var-or-nothing)
+    - [Inheritance](#inheritance)
+    - [Abstract Classes](#abstract-classes)
+    - [Traits (Interfaces)](#traits-interfaces)
+    - [Infix Notation](#infix-notation)
+    - [Anonymous Classes](#anonymous-classes)
+    - [Singleton Objects](#singleton-objects)
+    - [The apply Method - Deep Dive](#the-apply-method---deep-dive)
+    - [Companion Objects](#companion-objects)
+    - [Case Classes](#case-classes)
+        - [Case Class Constructor Parameters - Special Behavior!](#case-class-constructor-parameters---special-behavior)
+        - [Explicit val in Case Classes](#explicit-val-in-case-classes)
+        - [Using var in Case Classes](#using-var-in-case-classes)
+    - [Exception Handling](#exception-handling)
+    - [Generics](#generics)
+    - [Key Principles](#key-principles)
 3. [Functional Programming](#functional-programming)
-   - [Functions as Objects](#functions-as-objects)
-   - [Function Syntax Sugar](#function-syntax-sugar)
-   - [Higher-Order Functions (HOF)](#higher-order-functions-hof)
-   - [For Comprehensions](#for-comprehensions)
-   - [Collections](#collections)
-     - [Lists](#lists)
-     - [Sequences](#sequences)
-     - [Vectors](#vectors)
-     - [Sets](#sets)
-     - [Ranges](#ranges)
-     - [Tuples](#tuples)
-     - [Maps](#maps)
+    - [Functions as Objects](#functions-as-objects)
+    - [Function Syntax Sugar](#function-syntax-sugar)
+    - [Multiple Parameter Lists / Currying](#multiple-parameter-lists--currying)
+    - [Higher-Order Functions (HOF)](#higher-order-functions-hof)
+    - [For Comprehensions](#for-comprehensions)
+    - [Collections](#collections)
+        - [Lists](#lists)
+        - [Sequences](#sequences)
+        - [Vectors](#vectors)
+        - [Sets](#sets)
+        - [Ranges](#ranges)
+        - [Tuples](#tuples)
+        - [Maps](#maps)
 4. [Pattern Matching](#pattern-matching)
-   - [Basic Pattern Matching](#basic-pattern-matching)
-   - [Case Class Decomposition](#case-class-decomposition)
-   - [Deconstructing Tuples](#deconstructing-tuples)
-   - [Decomposing Lists](#decomposing-lists)
-   - [Pattern Matching with Option (Some/None)](#pattern-matching-with-option-somenone)
-   - [Pattern Matching with null](#pattern-matching-with-null)
+    - [Basic Pattern Matching](#basic-pattern-matching)
+    - [Case Class Decomposition](#case-class-decomposition)
+    - [Deconstructing Tuples](#deconstructing-tuples)
+    - [Decomposing Lists](#decomposing-lists)
+    - [Pattern Matching with Option (Some/None)](#pattern-matching-with-option-somenone)
+    - [Pattern Matching with null](#pattern-matching-with-null)
 5. [Advanced Topics](#advanced-topics)
-   - [Lazy Evaluation](#lazy-evaluation)
-   - [Option Type](#option-type)
-     - [Basic Option Usage](#basic-option-usage)
-     - [Option as a Pseudo-Collection](#option-as-a-pseudo-collection)
-     - [Chaining Option Operations](#chaining-option-operations)
-     - [Option with Collections](#option-with-collections)
-   - [Try Type](#try-type)
-     - [Basic Try Usage](#basic-try-usage)
-     - [Try as a Pseudo-Collection](#try-as-a-pseudo-collection)
-     - [Chaining Try Operations](#chaining-try-operations)
-     - [Try with Collections](#try-with-collections)
-     - [Option vs Try](#option-vs-try)
-   - [Future (Asynchronous Programming)](#future-asynchronous-programming)
-   - [Implicits Basics (Scala 2)](#implicits-basics-scala-2)
-     - [Implicit Arguments](#implicit-arguments)
-     - [Implicit Conversions (Enrichment)](#implicit-conversions-enrichment)
-   - [Contextual Abstractions (Scala 3)](#contextual-abstractions-scala-3)
-     - [Context Parameters and Arguments (given/using)](#context-parameters-and-arguments-givenusing)
-     - [Type Classes Pattern](#type-classes-pattern)
-     - [Where Scala Looks for Given Instances](#where-scala-looks-for-given-instances)
-     - [Context Bounds](#context-bounds)
-     - [Extension Methods](#extension-methods)
-     - [Multiple Extension Methods](#multiple-extension-methods)
-     - [Extension Methods with Type Parameters](#extension-methods-with-type-parameters)
-     - [Use Cases for Context Parameters](#use-cases-for-context-parameters)
-     - [Scala 2 Implicits vs Scala 3 Contextual Abstractions](#scala-2-implicits-vs-scala-3-contextual-abstractions)
+    - [Lazy Evaluation](#lazy-evaluation)
+    - [Option Type](#option-type)
+        - [Basic Option Usage](#basic-option-usage)
+        - [Option as a Pseudo-Collection](#option-as-a-pseudo-collection)
+        - [Chaining Option Operations](#chaining-option-operations)
+        - [Option with Collections](#option-with-collections)
+    - [Try Type](#try-type)
+        - [Basic Try Usage](#basic-try-usage)
+        - [Try as a Pseudo-Collection](#try-as-a-pseudo-collection)
+        - [Chaining Try Operations](#chaining-try-operations)
+        - [Try with Collections](#try-with-collections)
+        - [Option vs Try](#option-vs-try)
+    - [Future (Asynchronous Programming)](#future-asynchronous-programming)
+    - [Implicits Basics (Scala 2)](#implicits-basics-scala-2)
+        - [Implicit Arguments](#implicit-arguments)
+        - [Implicit Conversions (Enrichment)](#implicit-conversions-enrichment)
+    - [Contextual Abstractions (Scala 3)](#contextual-abstractions-scala-3)
+        - [Context Parameters and Arguments (given/using)](#context-parameters-and-arguments-givenusing)
+        - [Type Classes Pattern](#type-classes-pattern)
+        - [Where Scala Looks for Given Instances](#where-scala-looks-for-given-instances)
+        - [Context Bounds](#context-bounds)
+        - [Extension Methods](#extension-methods)
+        - [Multiple Extension Methods](#multiple-extension-methods)
+        - [Extension Methods with Type Parameters](#extension-methods-with-type-parameters)
+        - [Use Cases for Context Parameters](#use-cases-for-context-parameters)
+        - [Scala 2 Implicits vs Scala 3 Contextual Abstractions](#scala-2-implicits-vs-scala-3-contextual-abstractions)
 6. [Quick Cheat Sheet](#quick-cheat-sheet)
 7. [Practice Tips](#practice-tips)
 
@@ -588,8 +589,8 @@ val firstString = aStringList.head  // String
 ### Key Principles
 
 1. **Immutability**: Operate with immutable values/objects
-   - Any modification returns ANOTHER object
-   - Benefits: works great in multithreaded/distributed environments
+    - Any modification returns ANOTHER object
+    - Benefits: works great in multithreaded/distributed environments
 
 ```scala
 val reversedList = aList.reverse  // returns NEW list
@@ -636,6 +637,194 @@ val doubler: Function1[Int, Int] = new Function1[Int, Int] {
 ```
 
 **Remember**: ALL SCALA FUNCTIONS ARE INSTANCES OF FUNCTION_X TYPES
+
+### Multiple Parameter Lists / Currying
+
+**Currying** is the technique of transforming a function with multiple arguments into a sequence of functions, each taking a single argument. Scala supports this natively with multiple parameter lists.
+
+#### Basic Syntax
+
+```scala
+// Single parameter list (normal)
+def add(x: Int, y: Int): Int = x + y
+add(3, 4)  // 7
+
+// Multiple parameter lists (curried)
+def addCurried(x: Int)(y: Int): Int = x + y
+addCurried(3)(4)  // 7
+```
+
+#### Why Use Multiple Parameter Lists?
+
+**1. Partial Application** - Create specialized functions by providing some arguments:
+
+```scala
+def multiply(x: Int)(y: Int): Int = x * y
+
+val double = multiply(2) _    // partially applied function
+val triple = multiply(3) _
+
+double(5)   // 10
+triple(5)   // 15
+
+
+// Practical example: custom formatters
+def formatMessage(prefix: String)(message: String): String =
+  s"$prefix: $message"
+
+val errorFormatter = formatMessage("ERROR") _
+val infoFormatter = formatMessage("INFO") _
+
+errorFormatter("Something went wrong")  // "ERROR: Something went wrong"
+infoFormatter("Process completed")      // "INFO: Process completed"
+```
+
+**2. Type Inference** - Later parameter lists can use types from earlier ones:
+
+```scala
+def foldLeft[A, B](list: List[A], initial: B)(f: (B, A) => B): B =
+  list match {
+    case Nil => initial
+    case head :: tail => foldLeft(tail, f(initial, head))(f)
+  }
+
+// Scala can infer types in the function f
+val numbers = List(1, 2, 3, 4)
+foldLeft(numbers, 0)((acc, x) => acc + x)  // types inferred!
+// Compare with single parameter list - would need explicit types
+```
+
+**3. Implicit/Using Parameters** - Separate implicit/contextual parameters:
+
+```scala
+// Scala 2 style
+def greet(name: String)(implicit greeting: String): String =
+  s"$greeting, $name!"
+
+implicit val defaultGreeting: String = "Hello"
+greet("Alice")  // "Hello, Alice!"
+
+// Scala 3 style
+def greet(name: String)(using greeting: String): String =
+  s"$greeting, $name!"
+
+given defaultGreeting: String = "Hello"
+greet("Bob")  // "Hello, Bob!"
+```
+
+**4. Custom Control Structures** - Create DSL-like syntax:
+
+```scala
+def transaction[A](db: Database)(code: Database => A): A = {
+  db.beginTransaction()
+  try {
+    val result = code(db)
+    db.commit()
+    result
+  } catch {
+    case e: Exception =>
+      db.rollback()
+      throw e
+  }
+}
+
+// Usage looks like a control structure
+transaction(myDatabase) { db =>
+  db.insert("users", user)
+  db.update("accounts", account)
+}
+```
+
+#### Currying Regular Functions
+
+You can convert regular functions to curried form:
+
+```scala
+// Regular function
+def add(x: Int, y: Int, z: Int): Int = x + y + z
+
+// Manual currying
+def addCurried(x: Int)(y: Int)(z: Int): Int = x + y + z
+
+// Or curry an existing function
+val curriedAdd = (add _).curried
+curriedAdd(1)(2)(3)  // 6
+
+// Partial application
+val add5 = curriedAdd(5) _
+val add5and10 = add5(10) _
+add5and10(3)  // 18
+```
+
+#### Real-World Examples
+
+```scala
+// Example 1: Configuration-based processing
+def processData(config: Config)(data: List[String]): List[String] = {
+  data.map(s => if (config.uppercase) s.toUpperCase else s.toLowerCase)
+}
+
+val prodConfig = Config(uppercase = true)
+val devConfig = Config(uppercase = false)
+
+val prodProcessor = processData(prodConfig) _
+val devProcessor = processData(devConfig) _
+
+prodProcessor(List("hello", "world"))  // List("HELLO", "WORLD")
+devProcessor(List("hello", "world"))   // List("hello", "world")
+
+
+// Example 2: Dependency injection
+trait UserRepository {
+  def findById(id: Int): Option[User]
+}
+
+def getUserEmail(repo: UserRepository)(userId: Int): Option[String] =
+  repo.findById(userId).map(_.email)
+
+val emailFinder = getUserEmail(myRepository) _
+emailFinder(123)  // Some("user@example.com")
+
+
+// Example 3: Builder pattern
+def buildQuery(table: String)(columns: String*)(where: String): String =
+  s"SELECT ${columns.mkString(", ")} FROM $table WHERE $where"
+
+val userQuery = buildQuery("users")("id", "name", "email") _
+userQuery("age > 18")  // "SELECT id, name, email FROM users WHERE age > 18"
+userQuery("active = true")  // "SELECT id, name, email FROM users WHERE active = true"
+```
+
+#### Multiple Parameter Lists vs Tuples
+
+```scala
+// Using tuple (NOT recommended)
+def add(params: (Int, Int)): Int = params._1 + params._2
+add((3, 4))  // awkward syntax
+
+// Using multiple parameters (better)
+def add(x: Int, y: Int): Int = x + y
+add(3, 4)  // cleaner
+
+// Using currying (best for partial application)
+def add(x: Int)(y: Int): Int = x + y
+val add5 = add(5) _
+add5(10)  // 15
+```
+
+#### Key Points
+
+- **Multiple parameter lists** = `def func(a: A)(b: B): C`
+- **Currying** = transforming multi-arg function into chain of single-arg functions
+- **Partial application** = providing some arguments to get a new function
+- Use currying for:
+    - Partial application
+    - Better type inference
+    - Separating implicit/using parameters
+    - Building DSLs
+    - Dependency injection
+
+**Common pattern**: `def method(normalParams)(implicitParams)` or `def method(normalParams)(usingParams)` in Scala 3
 
 ### Higher-Order Functions (HOF)
 
@@ -1522,8 +1711,8 @@ Scala searches for `given` instances in this order:
 1. **Local scope** - givens defined in the current scope
 2. **Imported scope** - givens explicitly imported
 3. **Companions of all types involved** - companion objects of:
-   - The type being used (e.g., companion of `List`)
-   - Type parameters (e.g., companion of `Int`)
+    - The type being used (e.g., companion of `List`)
+    - Type parameters (e.g., companion of `Int`)
 
 ```scala
 // Example: given in companion object
@@ -1536,10 +1725,10 @@ case class Person(name: String, age: Int)
 object Person {
   // This given is automatically found when Person is used
   given personSerializer: JsonSerializer[Person] =
-    new JsonSerializer[Person] {
-      def toJson(p: Person): String =
-        s"""{"name":"${p.name}","age":${p.age}}"""
-    }
+  new JsonSerializer[Person] {
+    def toJson(p: Person): String =
+      s"""{"name":"${p.name}","age":${p.age}}"""
+  }
 }
 
 def serialize[A](value: A)(using serializer: JsonSerializer[A]): String =
