@@ -1623,20 +1623,480 @@ val optFromTry: Option[Int] = tryVal.toOption
 
 ### Future (Asynchronous Programming)
 
+**Future** is Scala's way to handle asynchronous computations. A Future represents a value that may not be available yet but will be computed at some point. It's a pseudo-collection containing a value when evaluated.
+
+#### Basic Future Usage
+
 ```scala
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
 
-val aFuture = Future {
+// Create a simple Future - runs asynchronously
+val aFuture: Future[Int] = Future {
   println("Loading...")
   Thread.sleep(1000)
   println("I have computed a value.")
   67
 }
+// Future starts executing immediately on creation
 
-// Future = collection containing a value when evaluated
-// Composable with map, flatMap, filter
+// Main thread continues without waiting
+println("Waiting for result...")
+
+// IMPORTANT: You need an ExecutionContext (thread pool) to run Futures
+// ExecutionContext.Implicits.global provides a default thread pool
 ```
+
+#### Creating Futures
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// From a value - creates an already completed Future
+val immediateValue: Future[Int] = Future.successful(42)
+
+// From an exception - creates a failed Future
+val failedFuture: Future[Int] = Future.failed(new RuntimeException("Oops!"))
+
+// From computation that might throw
+val computation: Future[Int] = Future {
+  10 / 2  // computed asynchronously
+}
+
+val failingComputation: Future[Int] = Future {
+  10 / 0  // throws ArithmeticException - Future will be failed
+}
+```
+
+#### Future Callbacks
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
+
+val myFuture: Future[Int] = Future {
+  Thread.sleep(500)
+  42
+}
+
+// onComplete - handles both success and failure
+myFuture.onComplete {
+  case Success(value) => println(s"Success: $value")
+  case Failure(exception) => println(s"Failed: ${exception.getMessage}")
+}
+
+// foreach - only handles success
+myFuture.foreach { value: Int =>
+  println(s"Got value: $value")
+}
+
+// failed - converts to Future[Throwable] on failure
+val failedResult: Future[Throwable] = myFuture.failed
+failedResult.foreach { ex: Throwable =>
+  println(s"Exception was: ${ex.getMessage}")
+}
+```
+
+#### Transforming Futures
+
+Futures work as pseudo-collections with map, flatMap, filter:
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// map: transform the result when Future completes
+val future1: Future[Int] = Future { 21 }
+val doubled: Future[Int] = future1.map { x: Int => x * 2 }
+// Result (when complete): 42
+
+// flatMap: chain Futures - flatten nested Futures
+def fetchUserId(): Future[Int] = Future {
+  Thread.sleep(100)
+  123
+}
+
+def fetchUserName(id: Int): Future[String] = Future {
+  Thread.sleep(100)
+  s"User_$id"
+}
+
+val userName: Future[String] = fetchUserId().flatMap { id: Int =>
+  fetchUserName(id)
+}
+// Result (when complete): "User_123"
+
+// filter: keep value only if predicate is true
+val number: Future[Int] = Future { 42 }
+val filtered: Future[Int] = number.filter { n: Int => n > 40 }
+// Success(42)
+
+val filtered2: Future[Int] = number.filter { n: Int => n > 50 }
+// Failure(NoSuchElementException)
+
+// withFilter: same as filter, used in for comprehensions
+val result: Future[Int] = number.withFilter { n: Int => n > 40 }
+
+// recover: handle failure by providing a fallback value
+val risky: Future[Int] = Future { 10 / 0 }
+val recovered: Future[Int] = risky.recover {
+  case _: ArithmeticException => 0
+}
+// Result: Success(0)
+
+// recoverWith: handle failure with another Future
+val recoveredWith: Future[Int] = risky.recoverWith {
+  case _: ArithmeticException => Future.successful(0)
+}
+// Result: Success(0)
+
+// fallbackTo: use alternative Future if this one fails
+val backup: Future[Int] = Future { 99 }
+val withFallback: Future[Int] = risky.fallbackTo(backup)
+// Result: Success(99)
+```
+
+#### Combining Multiple Futures
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// zip: combine two Futures into a tuple
+val future1: Future[Int] = Future { 10 }
+val future2: Future[String] = Future { "Hello" }
+val combined: Future[(Int, String)] = future1.zip(future2)
+// Result: (10, "Hello")
+
+// zipWith: combine two Futures with a function
+val summed: Future[Int] = Future { 10 }.zipWith(Future { 20 }) {
+  (a: Int, b: Int) => a + b
+}
+// Result: 30
+
+// sequence: convert List[Future[T]] to Future[List[T]]
+val futures: List[Future[Int]] = List(
+  Future { 1 },
+  Future { 2 },
+  Future { 3 }
+)
+val sequenced: Future[List[Int]] = Future.sequence(futures)
+// Result: List(1, 2, 3)
+
+// traverse: map and sequence in one step
+val numbers: List[Int] = List(1, 2, 3)
+val futureResults: Future[List[Int]] = Future.traverse(numbers) { n: Int =>
+  Future { n * 2 }
+}
+// Result: List(2, 4, 6)
+
+// firstCompletedOf: returns first Future to complete
+val slow: Future[Int] = Future { Thread.sleep(1000); 1 }
+val fast: Future[Int] = Future { Thread.sleep(100); 2 }
+val first: Future[Int] = Future.firstCompletedOf(List(slow, fast))
+// Result: 2 (completes first)
+```
+
+#### For Comprehensions with Futures
+
+For comprehensions make chaining Futures much more readable:
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// Sequential Future execution
+def fetchUserId(): Future[Int] = Future {
+  Thread.sleep(100)
+  123
+}
+
+def fetchUserAge(id: Int): Future[Int] = Future {
+  Thread.sleep(100)
+  25
+}
+
+def fetchUserName(id: Int): Future[String] = Future {
+  Thread.sleep(100)
+  s"User_$id"
+}
+
+// Using for comprehension - much cleaner!
+val userInfo: Future[String] = for {
+  id <- fetchUserId()          // waits for id
+  age <- fetchUserAge(id)      // then fetches age
+  name <- fetchUserName(id)    // then fetches name
+} yield s"$name is $age years old"
+// Result: "User_123 is 25 years old"
+
+// Equivalent to flatMap/map chain:
+val userInfoVerbose: Future[String] = fetchUserId().flatMap { id: Int =>
+  fetchUserAge(id).flatMap { age: Int =>
+    fetchUserName(id).map { name: String =>
+      s"$name is $age years old"
+    }
+  }
+}
+
+// With filters
+val adultUserInfo: Future[String] = for {
+  id <- fetchUserId()
+  age <- fetchUserAge(id)
+  if age >= 18                 // filter: only adults
+  name <- fetchUserName(id)
+} yield s"Adult: $name, age $age"
+
+// Parallel execution - start Futures before for comprehension
+val futureId: Future[Int] = fetchUserId()
+val futureAge: Future[Int] = fetchUserAge(123)
+val futureName: Future[String] = fetchUserName(123)
+
+val parallelResult: Future[String] = for {
+  id <- futureId      // these all started already
+  age <- futureAge    // so they run in parallel
+  name <- futureName
+} yield s"$name is $age years old"
+```
+
+#### Promise - Creating Futures Manually
+
+**Promise** is a writable, single-assignment container that completes a Future. Use it when you need to complete a Future from outside code (e.g., callbacks, event handlers).
+
+```scala
+import scala.concurrent.{Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure, Try}
+
+// Basic Promise usage
+val promise: Promise[Int] = Promise[Int]()
+val future: Future[Int] = promise.future  // get Future from Promise
+
+// Complete the Promise with a value
+promise.success(42)
+// Now future contains 42
+
+// Or complete with failure
+val failedPromise: Promise[Int] = Promise[Int]()
+failedPromise.failure(new RuntimeException("Something went wrong"))
+
+// complete - with Try (Success or Failure)
+val promise2: Promise[Int] = Promise[Int]()
+promise2.complete(Success(100))
+// or
+promise2.complete(Failure(new Exception("Error")))
+
+// trySuccess/tryFailure - returns Boolean (false if already completed)
+val promise3: Promise[Int] = Promise[Int]()
+val wasCompleted1: Boolean = promise3.trySuccess(10)  // true
+val wasCompleted2: Boolean = promise3.trySuccess(20)  // false - already completed
+
+// completeWith - complete with result of another Future
+val promise4: Promise[Int] = Promise[Int]()
+val otherFuture: Future[Int] = Future { 99 }
+promise4.completeWith(otherFuture)
+```
+
+#### Practical Promise Example
+
+```scala
+import scala.concurrent.{Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// Simulate async API with callbacks
+def asyncApiCall(callback: Int => Unit): Unit = {
+  // Simulates external async operation
+  new Thread {
+    override def run(): Unit = {
+      Thread.sleep(500)
+      callback(42)
+    }
+  }.start()
+}
+
+// Wrap callback-based API with Promise
+def asyncApiCallAsFuture(): Future[Int] = {
+  val promise: Promise[Int] = Promise[Int]()
+
+  asyncApiCall { result: Int =>
+    promise.success(result)
+  }
+
+  promise.future
+}
+
+// Now we can use it as a Future!
+val result: Future[Int] = asyncApiCallAsFuture()
+result.foreach { value: Int =>
+  println(s"Got result: $value")
+}
+
+// More complex: Promise with timeout
+def fetchWithTimeout(timeoutMs: Long): Future[String] = {
+  val promise: Promise[String] = Promise[String]()
+
+  // Actual work
+  Future {
+    Thread.sleep(1000)
+    "Data loaded"
+  }.onComplete { result: Try[String] =>
+    promise.tryComplete(result)
+  }
+
+  // Timeout
+  Future {
+    Thread.sleep(timeoutMs)
+    promise.tryFailure(new Exception("Timeout!"))
+  }
+
+  promise.future
+}
+
+val timedResult: Future[String] = fetchWithTimeout(500)
+timedResult.onComplete {
+  case Success(data) => println(s"Success: $data")
+  case Failure(ex) => println(s"Failed: ${ex.getMessage}")
+}
+// Prints: "Failed: Timeout!" (because timeout is 500ms, work takes 1000ms)
+```
+
+#### Producer-Consumer with Promise
+
+```scala
+import scala.concurrent.{Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// Producer-consumer pattern
+def producer(promise: Promise[Int]): Unit = {
+  Future {
+    println("Producer: computing...")
+    Thread.sleep(500)
+    val result: Int = 42
+    println(s"Producer: done, sending $result")
+    promise.success(result)
+  }
+}
+
+def consumer(future: Future[Int]): Unit = {
+  future.foreach { value: Int =>
+    println(s"Consumer: received $value")
+  }
+}
+
+val promise: Promise[Int] = Promise[Int]()
+val future: Future[Int] = promise.future
+
+consumer(future)   // Consumer waits for value
+producer(promise)  // Producer provides value
+
+// Output:
+// Producer: computing...
+// Producer: done, sending 42
+// Consumer: received 42
+```
+
+#### Waiting for Futures (Blocking)
+
+**WARNING**: Blocking defeats the purpose of async programming. Use only when absolutely necessary (e.g., end of program, tests).
+
+```scala
+import scala.concurrent.{Future, Await}
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+val future: Future[Int] = Future {
+  Thread.sleep(500)
+  42
+}
+
+// Await.result - blocks until Future completes or timeout
+val result: Int = Await.result(future, 2.seconds)  // 42
+
+// Await.ready - blocks until complete, returns the Future itself
+val readyFuture: Future[Int] = Await.ready(future, 2.seconds)
+
+// isCompleted - check without blocking
+val isDone: Boolean = future.isCompleted  // true or false
+
+// value - returns Option[Try[T]] if completed, None otherwise
+val maybeResult: Option[Try[Int]] = future.value
+// Some(Success(42)) if completed successfully
+// Some(Failure(exception)) if failed
+// None if not yet completed
+```
+
+#### Best Practices
+
+```scala
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+// 1. Always use an ExecutionContext
+// Don't: (will not compile)
+// val future = Future { 42 }
+
+// Do:
+val future: Future[Int] = Future { 42 }(ExecutionContext.global)
+// or use import: import scala.concurrent.ExecutionContext.Implicits.global
+
+// 2. Prefer transformations over callbacks
+// Don't:
+val future1: Future[Int] = Future { 10 }
+future1.foreach { x: Int =>
+  val doubled: Int = x * 2
+  println(doubled)
+}
+
+// Do:
+val future2: Future[Int] = Future { 10 }
+val doubled: Future[Int] = future2.map { x: Int => x * 2 }
+doubled.foreach { x: Int => println(x) }
+
+// 3. Use for comprehensions for multiple Futures
+// Don't:
+fetchUserId().flatMap { id: Int =>
+  fetchUserAge(id).flatMap { age: Int =>
+    fetchUserName(id).map { name: String =>
+      (id, age, name)
+    }
+  }
+}
+
+// Do:
+for {
+  id <- fetchUserId()
+  age <- fetchUserAge(id)
+  name <- fetchUserName(id)
+} yield (id, age, name)
+
+// 4. Handle errors gracefully
+val safe: Future[Int] = Future { 10 / 0 }.recover {
+  case _: ArithmeticException => 0
+}
+
+// 5. Use Promise for bridging callback-based APIs
+def callbackApi(callback: String => Unit): Unit = ???
+
+def asFuture(): Future[String] = {
+  val promise: Promise[String] = Promise[String]()
+  callbackApi { result: String => promise.success(result) }
+  promise.future
+}
+```
+
+#### Key Points
+
+- **Future**: read-only placeholder for async computation
+- **Promise**: writable, single-assignment container that completes a Future
+- Futures compose with map, flatMap, filter (like Option and Try)
+- Use for comprehensions for cleaner async code
+- Promises bridge callback-based APIs to Future-based code
+- Avoid blocking with Await unless necessary
+- Always need an ExecutionContext (thread pool)
+- Futures start executing immediately on creation
+- A Promise can only be completed once
 
 ### Implicits Basics (Scala 2)
 
