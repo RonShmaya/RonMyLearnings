@@ -1,5 +1,20 @@
 # Kafka Streams - Essential Rules
 
+## Top Critical Points - Must Know ⚠️
+
+1. **Always define grace explicitly** - default 24h is dangerous, causes OOM
+2. **Never use Suppress without well-defined grace** - large grace + suppress = OOM risk
+3. **Windows only close when new event arrives** - stream time is event-driven, not timer-based
+4. **Both sides of join must have same key and partition count**
+5. **Be explicit about error handling** - defaults are too aggressive for production
+6. **Prefer mapValues() over map()** - avoid unnecessary repartitioning
+7. **Stateful ops: always be aware of which timestamp drives processing**
+8. **If you don't need final result → don't use suppress**
+9. **Suppress is stateful and heavy** - always define BufferConfig
+10. **Stream time = per partition, always forward** - late events dropped after window end + grace
+
+---
+
 ## Stateless Operations
 - Never configure stateful-only params for stateless operations
 - Prefer `mapValues()` over `map()` to avoid repartitioning
@@ -36,12 +51,3 @@
 - **KStream**: event stream, each record independent
 - **KTable**: latest value per key, holds only partition data
 - **GlobalKTable**: all partitions on every instance (use for small reference data only)
-
-## Checklist
-- [ ] Stateful ops: timestamp awareness confirmed?
-- [ ] Stateful ops: grace period explicitly defined (not 24h default)?
-- [ ] Suppress used: BufferConfig defined?
-- [ ] Suppress needed: is final result truly required?
-- [ ] Joins: same key and partition count on both sides?
-- [ ] Error handlers: all three types explicitly configured?
-- [ ] Windowing: grace period as small as possible?
