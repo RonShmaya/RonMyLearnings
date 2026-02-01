@@ -42,6 +42,36 @@ Essential rules for Akka actor system development including:
 - Capture sender() before async operations
 - Prefer tell (!) over ask (?)
 
+### [Protocol Buffers Rules](myLearnings/rules/proto-rules.md)
+Essential rules for Protocol Buffers schema design including:
+- Backward/forward compatibility
+- Field numbers and types
+- Enum design (0 = default)
+- Proto3 defaults and optional fields
+- Versioning strategies
+
+**Critical Points:**
+- Tag numbers are sacred - never change, reuse, or modify
+- Enum first value MUST be 0 (UNSPECIFIED)
+- Always reserve deleted field numbers
+- Use int64 for IDs, sint32 for negatives
+- Proto is API contract for 10+ years, not DB model
+
+### [Scala Rules](myLearnings/rules/scala-rules.md)
+Essential rules for writing Scala code including:
+- Constructor parameters (val/var/nothing)
+- Immutability and recursion
+- Pattern matching and for comprehensions
+- Option/Try/Future for safe error handling
+- Case classes and collections
+
+**Critical Points:**
+- Everything is expression - returns value, not statement
+- Use recursion not loops
+- val by default, avoid var
+- Never null - use Option[T]
+- Case class params auto-val, regular class params need explicit val
+
 ## 🚀 Usage
 
 These rules are designed for:
