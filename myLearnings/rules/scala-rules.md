@@ -10,8 +10,8 @@
 6. **Regular class params need val** - otherwise only accessible inside class
 7. **Never use null** - use Option[T] instead (Some/None)
 8. **Pattern matching over if/else** - more powerful and idiomatic
-9. **Enum value 0 must be unspecified/default** - first enum value
-10. **Code blocks return last expression** - the value of the block
+9. **Code blocks return last expression** - the value of the block
+10. **For comprehensions with yield** - transforms and returns collection
 
 ---
 
