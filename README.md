@@ -72,6 +72,25 @@ Essential rules for writing Scala code including:
 - Never null - use Option[T]
 - Case class params auto-val, regular class params need explicit val
 
+## 🔧 Technology-Specific Rules
+
+Technical rules for specific technologies and frameworks:
+
+### [gRPC Rules](myLearnings/tech/grpc-rules.md)
+Essential rules for gRPC service development including:
+- Call types (Unary, Server/Client/Bidirectional streaming)
+- Deadlines and timeouts
+- Status codes and error handling
+- Channel management and reuse
+- Interceptors and metadata
+
+**Critical Points:**
+- Always set deadlines/timeouts - prevent hanging calls
+- Reuse channels - creating per-call is expensive
+- Use correct status codes - UNAVAILABLE, INVALID_ARGUMENT, etc.
+- Only retry idempotent operations
+- Unary for most cases, streaming when appropriate
+
 ## 🚀 Usage
 
 These rules are designed for:
