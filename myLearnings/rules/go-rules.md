@@ -182,6 +182,7 @@
 ### Critical
 - **Return pointers for large structs** - `func f() *Big` avoid expensive copy
 - **Small structs can be by value** - `func f() Point` few fields, no arrays
+- **Pointer vs Value decision** - If struct is large, use pointer. If it must be mutated, use pointer. Otherwise value is fine
 
 ---
 
@@ -302,6 +303,7 @@ for _, b := range bigArr {
 - **Use pointer receivers for large structs** - `func (v *BigStruct) M()` avoid copy
 - **Use pointer receivers to modify** - `func (v *Vertex) Scale() { v.X *= 2 }` changes original
 - **Consistency** - if some methods use `*T`, all should
+- **Pointer vs Value decision** - If struct is large, use pointer. If it must be mutated, use pointer. Otherwise value is fine
 
 ### Unique to Go
 - **Automatic conversion** - `v.Method()` → `(&v).Method()` for pointer receiver

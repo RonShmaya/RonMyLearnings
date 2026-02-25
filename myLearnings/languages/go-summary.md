@@ -603,6 +603,8 @@ func main() {
 - **Need to modify** - return pointer
 - **Immutability desired** - return by value
 
+**Simple rule**: If the struct is large, use pointer. If it must be mutated, use pointer. Otherwise value is fine
+
 ```go
 // Small struct - OK to return by value
 type Point struct {
@@ -1076,6 +1078,8 @@ func main() {
 - Small structs
 - Immutable operations
 - Value semantics desired
+
+**Simple rule**: If the struct is large, use pointer. If it must be mutated, use pointer. Otherwise value is fine.
 
 **Important**: Value receivers and returning by value both create copies. For large structs, use pointers to avoid expensive copying.
 

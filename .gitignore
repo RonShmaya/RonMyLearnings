@@ -7,3 +7,7 @@
 # Temporary files
 *.tmp
 *~
+
+# Claude Code
+myLearnings/claude-tasks/
+myLearnings/my-local/
